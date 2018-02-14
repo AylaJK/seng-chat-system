@@ -1,5 +1,7 @@
 'use strict';
 
+let session = require('../session');
+
 let events = function(io) {
 
   io.on('connection', function(socket){
@@ -12,6 +14,10 @@ let events = function(io) {
 let init = function(app) {
   let http = require('http').Server(app);
   let io = require('socket.io')(http);
+
+  io.use(function(socket, next) {
+    session(socket.request, socket.request.res, next);
+  });
 
   events (io);
 
