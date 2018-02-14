@@ -1,26 +1,12 @@
-let app = require('express')();
-let http = require('http').Server(app);
-let io = require('socket.io')(http);
-let path = require('path');
+let express = require('express');
+let app = express();
+
+let router = require('./app/router');
+let http = require('./app/socket')(app);
+
 let port = process.env.PORT || 8080;
 
-app.get('/', function(req, res){
-  res.sendFile(path.join(__dirname, 'public/index.html'));
-});
-
-app.get('/main.css', function(req, res) {
-  res.sendFile(path.join(__dirname, 'public/main.css'));
-});
-
-app.get('/client.js', function(req, res) {
-  res.sendFile(path.join(__dirname, 'public/client.js'));
-});
-
-io.on('connection', function(socket){
-  socket.on('chat message', function(msg){
-    io.emit('chat message', msg);
-  });
-});
+app.use ('/', router);
 
 http.listen(port, function(){
   console.log('listening on *:' + port);
