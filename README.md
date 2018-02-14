@@ -1,13 +1,8 @@
-# chat-example
+# seng-chat-system
 
-This is the source code for a very simple chat example used for
-the [Getting Started](http://socket.io/get-started/chat/) guide
-of the Socket.IO website.
+This is a SENG 513 assignment to build a web application for online chatting.
 
-Please refer to it to learn how to run this application.
+As a starting point, we encouraged to clone the Socket.IO example code from
+[socketio/chat-example](https://github.com/socketio/chat-example.git).
 
-You can also spin up a free Heroku dyno to test it out:
 
-[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/socketio/chat-example)
-
-Besides, the application is deployed on [Now](https://zeit.co/now): https://socketio-chat-example.now.sh/
