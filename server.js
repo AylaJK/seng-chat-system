@@ -5,15 +5,15 @@ let path = require('path');
 let port = process.env.PORT || 8080;
 
 app.get('/', function(req, res){
-  res.sendFile(path.join(__dirname, 'index.html'));
+  res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
 app.get('/main.css', function(req, res) {
-  res.sendFile(path.join(__dirname, 'main.css'));
+  res.sendFile(path.join(__dirname, 'public/main.css'));
 });
 
 app.get('/client.js', function(req, res) {
-  res.sendFile(path.join(__dirname, '/client.js'));
+  res.sendFile(path.join(__dirname, 'public/client.js'));
 });
 
 io.on('connection', function(socket){
