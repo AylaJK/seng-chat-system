@@ -60,6 +60,12 @@ typings/
 # next.js build output
 .next
 
+
+# Emacs/Vim Temp Files
+*~
+*.swp
+
 # Vim Local Settings
 _vimrc_local.vim
+.vimrc
 
