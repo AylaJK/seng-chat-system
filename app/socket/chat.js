@@ -55,7 +55,7 @@ let init = function(io) {
     // Tell client their user info and send history
     socket.emit('hello', { 
       you: socket.request.session.user,
-      oUsers: getOnlineUsers(),
+      users: getOnlineUsers(),
       history: aHistory,
     });
     // Then tell everyone else who the new person is
