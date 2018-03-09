@@ -4,14 +4,7 @@ let cookieParser = require('../cookie');
 let session = require('../session');
 
 let events = function(io) {
-
-  io.on('connection', function(socket){
-    socket.on('chat message', function(msg){
-      let oldmsg = socket.handshake.session.oldmsg;
-      socket.handshake.session.oldmsg = msg;
-      io.emit('chat message', oldmsg);
-    });
-  });
+  require('./chat')(io);
 };
 
 let init = function(app) {
