@@ -82,7 +82,7 @@ let init = function(io) {
     socket.on('change name', function(sNewName) {
       sNewName = sNewName.trim(); // remove leading and trailing whitespace
       if (socket.request.session.user.name === sNewName)
-        return socket.emit('change name', { success: false, msg: 'That is you current username' });
+        return socket.emit('change name', { success: false, msg: 'That is your current username' });
       if (sNewName === '')
         return socket.emit('change name', { success: false, msg: 'Usernames must contain visible characters' });
       if (/^User[0-9]*$/g.test(sNewName))
