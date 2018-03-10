@@ -1,15 +1,25 @@
 $(function () {
   let socket = io();
+  let myuid = 0;
 
   $('form').submit(function(){
-    socket.emit('new message', $('#m').val());
+    let msg = $('#m').val();
+    if (!/[^\s]/g.test(msg)) return false; // Must have non-whitespace character
+    if (/^\/nick /g.test(msg)) // If setting nickname
+      socket.emit('change name', msg.replace(/^\/nick /g, ''));
+    else if (/^\/nickcolor /g.test(msg)) // If setting nickname colour
+      socket.emit('change colour', msg.replace(/^\/nickcolor /g, ''));
+    else
+      socket.emit('new message', msg);
     $('#m').val('');
     return false;
   });
 
   let displayMessage = function(record) {
     $('#messages').append(
-      $('<li>').addClass('chat-message').data('uid', record.user.id).html(
+      $('<li>').addClass('chat-message').addClass(function() {
+        if (record.user.id === myuid) return 'my-message';
+      }).data('uid', record.user.id).html(
         $('<p />').html([
           $('<span />').addClass('timestamp').text(() => {
             let date = new Date(record.time);
@@ -40,11 +50,12 @@ $(function () {
   };
 
   socket.on('hello', function(info) {
+    myuid = info.you.id;
     if ($('#messages li').length === 0) {
       for (let record of info.history) {
         displayMessage(record);
       }
-    };
+    }
     displaySysMessage("Hello " + info.you.name);
   });
 
