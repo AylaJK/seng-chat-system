@@ -1,6 +1,6 @@
 $(function () {
   let socket = io();
-  let myuid = 0;
+  let me = {};
 
   $('form').submit(function(){
     let msg = $('#m').val();
@@ -18,12 +18,14 @@ $(function () {
   let displayChatMessage = function(record) {
     $('#messages').append(
       $('<li>').addClass('chat-message').addClass(function() {
-        if (record.user.id === myuid) return 'my-message';
+        if (record.user.id === me.id) return 'my-message';
       }).data('rid', record.id).data('uid', record.user.id).html(
         $('<p />').html([
           $('<span />').addClass('timestamp').text(() => {
             let date = new Date(record.time);
-            return date.getHours() + ":" + date.getMinutes();
+            return date.getHours().toString().padStart(2, "0") + 
+              ":" + 
+              date.getMinutes().toString().padStart(2, "0");
           })[0],
           $('<span />').addClass('username').css('color', '#' + record.user.colour).text(record.user.name)[0],
         ]).append(record.msg)
@@ -35,10 +37,28 @@ $(function () {
     $('#messages').append($('<li>').addClass('system-message').text(msg));
   };
 
+  let userSetOnline = function(user) {
+    if ($('#users li').filter(function() { return $(this).data('uid') === user.id; }).length === 0)
+      $('#users').append(
+        $('<li>').data('uid', user.id).data('uname', user.name).data('ucolour', user.colour).html(
+          $('<span />').css('color', '#' + user.colour).text(user.name)
+        )
+      );
+  };
+
+  let userSetOffline = function(user) {
+    $('#users li').filter(function() { return $(this).data('uid') === user.id; }).remove();
+  };
+
   let changeName = function(user) {
     $('#messages li')
       .filter(function() { return $(this).data('uid') === user.id; })
       .find('span.username')
+      .text(user.name);
+    $('#users li')
+      .filter(function() { return $(this).data('uid') === user.id; })
+      .data('uname', user.name)
+      .find('span')
       .text(user.name);
   };
 
@@ -47,23 +67,36 @@ $(function () {
       .filter(function() { return $(this).data('uid') === user.id; })
       .find('span.username')
       .css('color', '#' + user.colour);
+    $('#users li')
+      .filter(function() { return $(this).data('uid') === user.id; })
+      .data('ucolour', user.colour)
+      .css('color', '#' + user.colour);
   };
 
   socket.on('hello', function(info) {
-    myuid = info.you.id;
+    me = info.you;
+    userSetOnline(info.you);
+    $('#username').text(info.you.name);
+    for (let userid of Object.keys(info.users)) {
+      userSetOnline(info.users[userid]);
+    }
     for (let record of info.history) {
       if ($('#messages li').filter(function() { return $(this).data('rid') === record.id; }).length === 0)
         displayChatMessage(record);
     }
-    displaySysMessage("Hello " + info.you.name);
+  });
+
+  socket.on('disconnect', function () {
+    userSetOffline(me);
+    displaySysMessage('You are offline');
   });
 
   socket.on('user join', function(user) {
-    displaySysMessage(user.name + ' has joined');
+    userSetOnline(user);
   });
 
   socket.on('user leave', function(user) {
-    displaySysMessage(user.name + ' has left');
+    userSetOffline(user);
   });
 
   socket.on('new message', function(record) {
@@ -73,18 +106,16 @@ $(function () {
 
   socket.on('user change name', function(user) {
     changeName(user);
-    displaySysMessage('user ' + user.id + ' has changed their name to ' + user.name);
   });
 
   socket.on('user change colour', function(user) {
     changeColour(user);
-    displaySysMessage('user ' + user.name + ' has changed their colour to ' + user.colour);
   });
 
   socket.on('change name', function(result) {
     if (result.success) { 
       changeName(result.user);
-      displaySysMessage('You changed your name to ' + result.user.name);
+      $('#username').text(result.user.name);
     }
     else displaySysMessage(result.msg);
   });

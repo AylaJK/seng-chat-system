@@ -5,9 +5,16 @@
     <link rel="stylesheet" type="text/css" href="main.css"/>
   </head>
   <body>
-    <ul id="messages"></ul>
-    <form action="">
-      <input id="m" autocomplete="off" autofocus /><button>Send</button>
+    <div id="main-wrapper" class="wrapper">
+      <div id="chat-window">
+        <ul id="messages"></ul>
+      </div>
+      <div id="users-window">
+        <ul id="users"></ul>
+      </div>
+    </div>
+    <form id="input-form" class="wrapper" action="">
+      <div><span id="username"></span></div><input id="m" autocomplete="off" autofocus /><button>Send</button>
     </form>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script src="/socket.io/socket.io.js"></script>

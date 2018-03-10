@@ -1,34 +1,54 @@
+/* ---------------- Page Defaults ---------------- */
+
 * {
   margin: 0; 
   padding: 0; 
-  box-sizing: border-box; 
 }
+
+*, 
+*:before, 
+*:after {
+    box-sizing: inherit;
+}
+  
+html {
+    box-sizing: border-box;
+}
+
 body { 
   font: 13px Helvetica, Arial; 
 }
-form { 
-  background: #000; 
-  padding: 3px; 
-  position: fixed; 
-  bottom: 0; 
-  width: 100%; 
+
+.wrapper {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -moz-flex-direction: row;
+  flex-direction: row;
 }
-form input { 
-  border: 0; 
-  padding: 10px; 
-  width: 90%; 
-  margin-right: .5%; 
-}
-form button { 
-  width: 9%; 
-  background: rgb(130, 224, 255); 
-  border: none; 
-  padding: 10px; 
-}
-#messages { 
+
+ul { 
   list-style-type: none; 
   margin: 0; 
   padding: 0; 
+}
+
+
+/* ---------------- Chat Window ---------------- */
+
+#chat-window {
+  margin: 4px;
+  padding: 5px;
+  border: 1px solid #cccc33;
+  border-radius: 7pt;
+  background: #dddd88;
+  flex: 3 1 60%;
+  order: 1;
+}
+
+#messages {
+  margin-bottom: 40px;
 }
 #messages li { 
   padding: 5px 10px; 
@@ -36,6 +56,77 @@ form button {
 #messages li:nth-child(odd) { 
   background: #eee; 
 }
-#messages { 
-  margin-bottom: 40px;
+
+#messages .timestamp,
+#messages .username {
+  padding-right: 10px;
+}
+
+#messages .username:after{
+  content: ':';
+}
+
+#messages .my-message {
+  font-weight: bold;
+}
+
+
+/* ---------------- User List ---------------- */
+
+#users-window {
+  margin: 4px;
+  padding: 5px;
+  border: 1px solid #8888bb;
+  border-radius: 7pt;
+  background: #ccccff;
+  flex: 1 6 20%;
+  order: 2;
+}
+
+
+/* ---------------- Input Form ---------------- */
+
+#input-form { 
+  background: #000; 
+  padding: 3px; 
+  position: fixed; 
+  bottom: 0; 
+  width: 100%; 
+}
+
+#input-form div,
+#input-form input, 
+#input-form button {
+  padding: 10px; 
+}
+#input-form div{
+  color: white;
+}
+#input-form input {
+  border: 0; 
+  margin-left: .5%; 
+  margin-right: .5%; 
+  flex: 3 1 60%;
+  order 2;
+}
+#input-form button { 
+  width: 9%; 
+  background: rgb(130, 224, 255); 
+  border: none; 
+  flex: 1 6 20%;
+  order: 3;
+}
+
+
+/* ---------------- Mobile Breakpoint ---------------- */
+
+@media all and (max-width: 640px) {
+  #main-wrapper {
+    -webkit-flex-direction: column;
+    -moz-flex-direction: column;
+    flex-direction: column;
+  }
+  #chat-window, #users-window {
+    order: 0;
+  }
 }
