@@ -15,11 +15,11 @@ $(function () {
     return false;
   });
 
-  let displayMessage = function(record) {
+  let displayChatMessage = function(record) {
     $('#messages').append(
       $('<li>').addClass('chat-message').addClass(function() {
         if (record.user.id === myuid) return 'my-message';
-      }).data('uid', record.user.id).html(
+      }).data('rid', record.id).data('uid', record.user.id).html(
         $('<p />').html([
           $('<span />').addClass('timestamp').text(() => {
             let date = new Date(record.time);
@@ -37,24 +37,23 @@ $(function () {
 
   let changeName = function(user) {
     $('#messages li')
-      .filter(function() { return $(this).data('uid') === user.id;})
+      .filter(function() { return $(this).data('uid') === user.id; })
       .find('span.username')
       .text(user.name);
   };
 
   let changeColour = function(user) {
     $('#messages li')
-      .filter(function() { return $(this).data('uid') === user.id;})
+      .filter(function() { return $(this).data('uid') === user.id; })
       .find('span.username')
       .css('color', '#' + user.colour);
   };
 
   socket.on('hello', function(info) {
     myuid = info.you.id;
-    if ($('#messages li').length === 0) {
-      for (let record of info.history) {
-        displayMessage(record);
-      }
+    for (let record of info.history) {
+      if ($('#messages li').filter(function() { return $(this).data('rid') === record.id; }).length === 0)
+        displayChatMessage(record);
     }
     displaySysMessage("Hello " + info.you.name);
   });
@@ -68,7 +67,7 @@ $(function () {
   });
 
   socket.on('new message', function(record) {
-    displayMessage(record);
+    displayChatMessage(record);
     window.scrollTo(0, document.body.scrollHeight);
   });
 

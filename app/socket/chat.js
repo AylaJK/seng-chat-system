@@ -1,23 +1,34 @@
 'use strict';
 
-let counter = 1;
-
-let genUser = function() {
-  let id = counter;
-  let name = 'User' + counter;
-  let colour = '000000';
-  counter++;
-  return { id, name, colour };
-};
+let genUser = (function() {
+  let iUserIdCounter = 1;
+  return function() {
+    return {
+      id: iUserIdCounter,
+      name: 'User' + iUserIdCounter++,
+      colour: '000000',
+    };
+  };
+})();
 
 let aHistory = [];
-let addToHistory = function(record) {
-  while (aHistory.length >= 200) {
-    aHistory.shift(); // pop fist array element
-  }
-  aHistory.push(record); // push onto end of array
-};
-let changeHistoricUsername = function (user) {
+let createRecord = (function() {
+  let iRecordIdCounter = 1;
+  return function(user, msg) {
+    let record = { 
+      id: iRecordIdCounter++,
+      time: Date.now(),
+      user: user, 
+      msg: msg,
+    };
+    while (aHistory.length >= 200) {
+      aHistory.shift(); // pop fist array element
+    }
+    aHistory.push(record); // push onto end of array
+    return record;
+  };
+})();
+let changeHistoricUser = function (user) {
   for (let record of aHistory) {
     if (record.user.id === user.id) record.user = user;
   }
@@ -69,13 +80,7 @@ let init = function(io) {
 
     // User Sends Message
     socket.on('new message', function(msg){
-      let record = { 
-        user: socket.request.session.user, 
-        time: Date.now(),
-        msg: msg,
-      };
-      addToHistory(record);
-      io.emit('new message', record);
+      io.emit('new message', createRecord(socket.request.session.user, msg));
     });
 
     // User Changes Name
@@ -94,7 +99,7 @@ let init = function(io) {
       oUsers[socket.request.session.user.id].name = sNewName;
       socket.request.session.user.name = sNewName;
       socket.request.session.save();
-      changeHistoricUsername(socket.request.session.user);
+      changeHistoricUser(socket.request.session.user);
       socket.broadcast.emit('user change name', socket.request.session.user);
       socket.emit('change name', { success: true, user: socket.request.session.user });
     });
@@ -109,7 +114,7 @@ let init = function(io) {
       oUsers[socket.request.session.user.id].colour = sNewColour;
       socket.request.session.user.colour = sNewColour;
       socket.request.session.save();
-      changeHistoricUsername(socket.request.session.user);
+      changeHistoricUser(socket.request.session.user);
       socket.broadcast.emit('user change colour', socket.request.session.user );
       socket.emit('change colour', { success: true, user: socket.request.session.user });
     });
