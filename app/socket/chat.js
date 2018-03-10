@@ -59,12 +59,12 @@ let init = function(io) {
       history: aHistory,
     });
     // Then tell everyone else who the new person is
-    socket.broadcast.emit('user join', { user: socket.request.session.user });
+    socket.broadcast.emit('user join', socket.request.session.user);
 
     // When User Leaves
     socket.on('disconnect', function () {
       userSetOffline(socket.request.session.user);
-      socket.broadcast.emit('user leave', { user: socket.request.session.user });
+      socket.broadcast.emit('user leave', socket.request.session.user);
     });
 
     // User Sends Message
@@ -82,36 +82,36 @@ let init = function(io) {
     socket.on('change name', function(sNewName) {
       sNewName = sNewName.trim(); // remove leading and trailing whitespace
       if (socket.request.session.user.name === sNewName)
-        return socket.emit('change name', { success: false, message: 'Cannot change to your current username' });
+        return socket.emit('change name', { success: false, msg: 'That is you current username' });
       if (sNewName === '')
-        return socket.emit('change name', { success: false, message: 'Usernames must contain visible characters' });
+        return socket.emit('change name', { success: false, msg: 'Usernames must contain visible characters' });
       if (/^User[0-9]*$/g.test(sNewName))
-        return socket.emit('change name', { success: false, message: 'That username is reserved, please pick another one' });
-      for (let user of oUsers) {
-        if (user.name === sNewName)
-          return socket.emit('change name', { success: false, message: 'That username is already taken, please pick another one' });
+        return socket.emit('change name', { success: false, msg: 'That username is reserved, please pick another one' });
+      for (let iUserId of Object.keys(oUsers)) {
+        if (oUsers[iUserId].name === sNewName)
+          return socket.emit('change name', { success: false, msg: 'That username is already taken, please pick another one' });
       }
       oUsers[socket.request.session.user.id].name = sNewName;
       socket.request.session.user.name = sNewName;
       socket.request.session.save();
       changeHistoricUsername(socket.request.session.user);
-      socket.broadcast.emit('user change name', { user: socket.request.session.user });
-      socket.emit('change name', { success: true });
+      socket.broadcast.emit('user change name', socket.request.session.user);
+      socket.emit('change name', { success: true, user: socket.request.session.user });
     });
 
     // User Changes Colour
     socket.on('change colour', function(sNewColour) {
-      sNewColour = sNewColour.toLower().trim;
+      sNewColour = sNewColour.toLowerCase().trim();
       if (sNewColour.length !== 6)
-        return socket.emit('change colour', { success: false, message: 'Colours must be 6 characters long' });
+        return socket.emit('change colour', { success: false, msg: 'Colours must be 6 characters long' });
       if (/[^0-9a-f]/g.test(sNewColour))
-        return socket.emit('change colour', { success: false, message: 'Colours can only contain the characters 0-9, A-F, or a-f' });
+        return socket.emit('change colour', { success: false, msg: 'Colours can only contain the characters 0-9, A-F, or a-f' });
       oUsers[socket.request.session.user.id].colour = sNewColour;
       socket.request.session.user.colour = sNewColour;
       socket.request.session.save();
       changeHistoricUsername(socket.request.session.user);
-      socket.broadcast.emit('user change colour', { user: socket.request.session.user });
-      socket.emit('change colour', { success: true });
+      socket.broadcast.emit('user change colour', socket.request.session.user );
+      socket.emit('change colour', { success: true, user: socket.request.session.user });
     });
   });
 };
