@@ -3,12 +3,27 @@
   <head>
     <title>Socket.IO chat</title>
     <link rel="stylesheet" type="text/css" href="main.css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body>
-    <ul id="messages"></ul>
-    <form action="">
-      <input id="m" autocomplete="off" autofocus /><button>Send</button>
-    </form>
+    <div id="page-wrapper" class="wrapper">
+      <div id="users-window" class="scrollable">
+        <ul id="users" class="wrapper"></ul>
+      </div>
+      <div id="chat-window" class="wrapper">
+        <ul id="messages" class="scrollable"></ul>
+        <ul id="sysmessages"></ul>
+      </div>
+    </div>
+    <div id="input-window">
+      <form id="input-form" class="wrapper" action="">
+        <div>
+          <span id="username"></span>
+        </div>
+        <input id="m" autocomplete="off" autofocus />
+        <button>Send</button>
+      </form>
+    </div>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/client.js"></script>

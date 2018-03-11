@@ -6,7 +6,7 @@ let genUser = (function() {
     return {
       id: iUserIdCounter,
       name: 'User' + iUserIdCounter++,
-      colour: '000000',
+      colour: 'e0e3e8',
     };
   };
 })();

@@ -1,41 +1,223 @@
+/* ---------------- Page Defaults ---------------- */
+
 * {
   margin: 0; 
   padding: 0; 
-  box-sizing: border-box; 
 }
+
+*, 
+*:before, 
+*:after {
+  box-sizing: inherit;
+}
+  
+html {
+  box-sizing: border-box;
+}
+
 body { 
   font: 13px Helvetica, Arial; 
+  color: #E0E3E8;
+  background-color: #303136;
 }
-form { 
-  background: #000; 
-  padding: 3px; 
-  position: fixed; 
-  bottom: 0; 
-  width: 100%; 
+
+.wrapper {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -moz-flex-direction: row;
+  flex-direction: row;
 }
-form input { 
-  border: 0; 
-  padding: 10px; 
-  width: 90%; 
-  margin-right: .5%; 
-}
-form button { 
-  width: 9%; 
-  background: rgb(130, 224, 255); 
-  border: none; 
-  padding: 10px; 
-}
-#messages { 
+
+ul { 
   list-style-type: none; 
   margin: 0; 
   padding: 0; 
 }
+
+
+/* ---------------- Page Flex ---------------- */
+
+#page-wrapper {
+  max-height: calc(100vh - 42px);
+}
+
+
+/* ---------------- Scrolling ---------------- */
+
+.scrollable {
+  overflow-y: scroll;
+}
+/* Styling does not work on Firefox & Edge */
+.scrollable::-webkit-scrollbar {
+  width: 10px;
+  left:-100px;
+}
+.scrollable::-webkit-scrollbar-track,
+.scrollable::-webkit-scrollbar-corner {
+  background: #303136; 
+}
+.scrollable::-webkit-scrollbar-thumb {
+  border-radius: 25px;
+  background: #1D2025; 
+}
+.scrollable::-webkit-scrollbar-thumb:hover {
+   background: #000000;
+}
+
+/* ---------------- Chat Window ---------------- */
+
+#chat-window {
+  margin: 4px;
+  padding: 5px;
+  flex: 3 1 70%;
+  order: 1;
+  max-height: 100%;
+  -webkit-flex-direction: column;
+  -moz-flex-direction: column;
+  flex-direction: column;
+}
+
+#messages {
+  flex: 1 1 100%;
+  background-color: #36393E;
+}
 #messages li { 
   padding: 5px 10px; 
+  margin-right: 5px;
 }
-#messages li:nth-child(odd) { 
-  background: #eee; 
+#messages li p {
+  word-wrap: break-word;
+  padding-left: 44px;
+  text-indent: -44px ;
 }
-#messages { 
-  margin-bottom: 40px;
+
+#messages .timestamp,
+#messages .username {
+  padding-right: 10px;
+}
+
+#messages .username:after{
+  content: ':';
+}
+
+#messages .my-message {
+  font-weight: bold;
+}
+
+#sysmessages {
+  margin-top: 10px;
+}
+#sysmessages li {
+  padding: 5px 10px;
+  margin-bottom: 2px;
+  min-height: 10px;
+}
+#sysmessages li.success {
+  background-color: #3F4B39;
+  color: #16FF00;
+}
+#sysmessages li.warn {
+  background-color: #4B4239;
+  color: #F7A416;
+}
+#sysmessages li.error {
+  background-color: #4B3738;
+  color: #FF1000;
+}
+
+
+/* ---------------- User List ---------------- */
+
+#users-window {
+  margin: 4px;
+  padding: 5px;
+  flex: 1 6 10%;
+  order: 2;
+}
+
+#users:before {
+  content: 'Online Users:';
+  margin-right: 5px;
+}
+#users {
+  -webkit-flex-direction: column;
+  -moz-flex-direction: column;
+  flex-direction: column;
+}
+#users li { 
+  flex 1;
+  padding: 5px 10px; 
+  margin-right: 5px;
+}
+
+
+/* ---------------- Input Form ---------------- */
+
+#input-window { 
+  background-color: #2B2C31;
+  padding: 3px; 
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+#input-form {
+  margin: 5px;
+}
+#input-form > * {
+  padding: 10px; 
+}
+#input-form input,
+#input-form button {
+  background-color: #484B52;
+}
+#input-form input {
+  color: #E0E3E8;
+  border: 0; 
+  flex: 3 1 60%;
+  order 2;
+}
+#input-form input:focus,
+#input-form button:focus {
+  outline: none;
+}
+#input-form button { 
+  color: #7A7E81;
+  min-width: 30px; 
+  border: none; 
+  order: 3;
+}
+#input-form button:hover {
+  color: #E0E3E8;
+}
+
+
+/* ---------------- Mobile Breakpoint ---------------- */
+
+@media all and (max-width: 640px) {
+  #page-wrapper {
+    -webkit-flex-direction: column;
+    -moz-flex-direction: column;
+    flex-direction: column;
+  }
+  #chat-window, #users-window {
+    order: 0;
+    min-height: 50px;
+  }
+  #users {
+    -webkit-flex-direction: row;
+    -moz-flex-direction: row;
+    flex-direction: row;
+    -webkit-flex-wrap: wrap;
+    -moz-flex-wrap: wrap;
+    flex-wrap: wrap;
+  }
+  #users li {
+    padding: 0;
+  }
+  #users li:not(:last-child) span:after {
+    content: ','
+  }
 }
