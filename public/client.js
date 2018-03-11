@@ -34,37 +34,39 @@ $(function () {
     $("#messages").scrollTop($("#messages")[0].scrollHeight);
   };
 
-  let displaySysMessage = function($msg, persistent) {
+  let displaySysMessage = function($msg, timeout) {
     $('#sysmessages').append($msg);
     $msg.show('fast', () => 
       $("#messages").scrollTop($("#messages")[0].scrollHeight)
     );
-    if (!persistent) {
+    if (timeout) {
       setTimeout(() => {
         $msg.hide('fast', () => 
           $msg.remove()
         );
-      }, 10000);
+      }, timeout);
     }
   };
 
   let displayInfoMessage = function(msg) {
-    displaySysMessage($('<li style="display: none;">').text(msg));
+    displaySysMessage($('<li style="display: none;">').text(msg), 20000);
   };
 
   let displaySuccessMessage = function(msg) {
-    displaySysMessage($('<li style="display: none;">').addClass('success').text(msg));
+    displaySysMessage($('<li style="display: none;">').addClass('success').text(msg), 10000);
   };
 
   let displayWarningMessage = function(msg) {
-    displaySysMessage($('<li style="display: none;">').addClass('warn').text(msg));
+    displaySysMessage($('<li style="display: none;">').addClass('warn').text(msg), 10000);
   };
 
-  let displayErrorMessage = function(msg) {
-    displaySysMessage($('<li style="display: none;">').addClass('error').text(msg), true);
+  let displayErrorMessage = function(msg, data) {
+    // Error messages must be cleared by another function call, not a timeout
+    displaySysMessage($('<li style="display: none;">').addClass('error').data('error', data).text(msg), false);
   };
 
   let userSetOnline = function(user) {
+    // If user not currently in Online Users list
     if ($('#users li').filter(function() { return $(this).data('uid') === user.id; }).length === 0)
       $('#users').append(
         $('<li>').data('uid', user.id).data('uname', user.name).data('ucolour', user.colour).html(
@@ -78,10 +80,12 @@ $(function () {
   };
 
   let changeName = function(user) {
+    // Change name in chat history
     $('#messages li')
       .filter(function() { return $(this).data('uid') === user.id; })
       .find('span.username')
       .text(user.name);
+    // Change name in Online Users list 
     $('#users li')
       .filter(function() { return $(this).data('uid') === user.id; })
       .data('uname', user.name)
@@ -90,10 +94,12 @@ $(function () {
   };
 
   let changeColour = function(user) {
+    // Change colour in chat history
     $('#messages li')
       .filter(function() { return $(this).data('uid') === user.id; })
       .find('span.username')
       .css('color', '#' + user.colour);
+    // Change colour in Online Users list
     $('#users li')
       .filter(function() { return $(this).data('uid') === user.id; })
       .data('ucolour', user.colour)
@@ -105,7 +111,7 @@ $(function () {
     me = info.you;
 
     // If offline message is displayed, remove it and show recconnected message
-    let offlineMessages = $('#sysmessages li').filter(function() { return $(this).data('offline'); });
+    let offlineMessages = $('#sysmessages li.error').filter(function() { return $(this).data('error') === 'offline'; });
     if (offlineMessages.length !== 0) {
       offlineMessages.remove();
       displaySuccessMessage('Reconnected');
@@ -116,15 +122,17 @@ $(function () {
           'To change your nickname colour use \'/nickcolor\'.');
     }
 
+    // Set name field to left of input text box
+    $('#username').text(info.you.name);
+
     // Clear and rebuild Online User list
     $('#users li').remove();
     userSetOnline(info.you);
-    $('#username').text(info.you.name);
     for (let userid of Object.keys(info.users)) {
       userSetOnline(info.users[userid]);
     }
 
-    // Restore Any missed History
+    // Display Any missed Chat History
     for (let record of info.history) {
       if ($('#messages li').filter(function() { return $(this).data('rid') === record.id; }).length === 0)
         displayChatMessage(record);
@@ -132,7 +140,7 @@ $(function () {
   });
 
   socket.on('disconnect', function () {
-    displayErrorMessage('You are offline');
+    displayErrorMessage('You are offline', 'offline');
   });
 
   socket.on('user join', function(user) {
