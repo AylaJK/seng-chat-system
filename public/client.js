@@ -34,34 +34,34 @@ $(function () {
     $("#messages").scrollTop($("#messages")[0].scrollHeight);
   };
 
-  let displaySysMessage = function($msg, persistent) {
+  let displaySysMessage = function($msg, timeout) {
     $('#sysmessages').append($msg);
     $msg.show('fast', () => 
       $("#messages").scrollTop($("#messages")[0].scrollHeight)
     );
-    if (!persistent) {
+    if (timeout) {
       setTimeout(() => {
         $msg.hide('fast', () => 
           $msg.remove()
         );
-      }, 10000);
+      }, timeout);
     }
   };
 
   let displayInfoMessage = function(msg) {
-    displaySysMessage($('<li style="display: none;">').text(msg));
+    displaySysMessage($('<li style="display: none;">').text(msg), 20000);
   };
 
   let displaySuccessMessage = function(msg) {
-    displaySysMessage($('<li style="display: none;">').addClass('success').text(msg));
+    displaySysMessage($('<li style="display: none;">').addClass('success').text(msg), 10000);
   };
 
   let displayWarningMessage = function(msg) {
-    displaySysMessage($('<li style="display: none;">').addClass('warn').text(msg));
+    displaySysMessage($('<li style="display: none;">').addClass('warn').text(msg), 10000);
   };
 
-  let displayErrorMessage = function(msg) {
-    displaySysMessage($('<li style="display: none;">').addClass('error').text(msg), true);
+  let displayErrorMessage = function(msg, data) {
+    displaySysMessage($('<li style="display: none;">').addClass('error').data('error', data).text(msg), false);
   };
 
   let userSetOnline = function(user) {
@@ -105,7 +105,7 @@ $(function () {
     me = info.you;
 
     // If offline message is displayed, remove it and show recconnected message
-    let offlineMessages = $('#sysmessages li').filter(function() { return $(this).data('offline'); });
+    let offlineMessages = $('#sysmessages li.error').filter(function() { return $(this).data('error') === 'offline'; });
     if (offlineMessages.length !== 0) {
       offlineMessages.remove();
       displaySuccessMessage('Reconnected');
@@ -132,7 +132,7 @@ $(function () {
   });
 
   socket.on('disconnect', function () {
-    displayErrorMessage('You are offline');
+    displayErrorMessage('You are offline', 'offline');
   });
 
   socket.on('user join', function(user) {
