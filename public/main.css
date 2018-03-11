@@ -40,7 +40,8 @@ ul {
 /* ---------------- Page Flex ---------------- */
 
 #page-wrapper {
-  max-height: calc(100vh - 42px);
+  height: calc(100vh - 42px);
+  margin-bottom: 42px;
 }
 
 
@@ -140,6 +141,7 @@ ul {
 #users:before {
   content: 'Online Users:';
   margin-right: 5px;
+  font-weight: bold;
 }
 #users {
   -webkit-flex-direction: column;
@@ -169,6 +171,18 @@ ul {
 #input-form > * {
   padding: 10px; 
 }
+
+#input-form div {
+  max-width: 24%;
+}
+#input-form #username {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
 #input-form input,
 #input-form button {
   background-color: #484B52;
@@ -205,6 +219,11 @@ ul {
   #chat-window, #users-window {
     order: 0;
     min-height: 50px;
+  }
+  #users-window {
+    min-height: 20px;
+    max-height: 41px;
+    flex: 0 0 auto;
   }
   #users {
     -webkit-flex-direction: row;
