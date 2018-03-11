@@ -1,11 +1,12 @@
 <!doctype html>
 <html>
   <head>
-    <title>Socket.IO chat</title>
+    <title>SENG 513 Chat</title>
     <link rel="stylesheet" type="text/css" href="main.css"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script src="/socket.io/socket.io.js"></script>
+    <script src="/client.js"></script>
   </head>
   <body>
     <div id="page-wrapper" class="wrapper">
@@ -13,7 +14,7 @@
         <ul id="users" class="wrapper"></ul>
       </div>
       <div id="chat-window" class="wrapper">
-        <ul id="messages" class="scrollable"></ul>
+        <ul id="messages" class="wrapper scrollable"></ul>
         <ul id="sysmessages"></ul>
       </div>
     </div>
@@ -26,6 +27,5 @@
         <button>Send</button>
       </form>
     </div>
-    <script src="/client.js"></script>
   </body>
 </html>

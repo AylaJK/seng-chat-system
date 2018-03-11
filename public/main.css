@@ -83,6 +83,12 @@ ul {
 #messages {
   flex: 1 1 100%;
   background-color: #36393E;
+  -webkit-flex-direction: column;
+  -moz-flex-direction: column;
+  flex-direction: column;
+}
+#messages li:first-child {
+  margin-top: auto;
 }
 #messages li { 
   padding: 5px 10px; 
