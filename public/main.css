@@ -39,6 +39,9 @@ ul {
 
 /* ---------------- Page Flex ---------------- */
 
+/* Fill the whole screen except for 42px at the 
+ * bottom where the input form is
+ */
 #page-wrapper {
   height: calc(100vh - 42px);
   margin-bottom: 42px;
@@ -80,6 +83,9 @@ ul {
   flex-direction: column;
 }
 
+/* Messages list to fill the whole vertical space
+ * less any visible system messages
+ */
 #messages {
   flex: 1 1 100%;
   background-color: #36393E;
@@ -87,6 +93,7 @@ ul {
   -moz-flex-direction: column;
   flex-direction: column;
 }
+/* Chat fill from the bottom */
 #messages li:first-child {
   margin-top: auto;
 }
@@ -178,6 +185,10 @@ ul {
   padding: 10px; 
 }
 
+/* Nickname Max Size so as to not shrink the 
+ * input text box too much, especially on smaller
+ * displays
+ */
 #input-form div {
   max-width: 24%;
 }
@@ -189,10 +200,12 @@ ul {
   width: 100%;
 }
 
+/* Make Text Box and Button appear to be combined */
 #input-form input,
 #input-form button {
   background-color: #484B52;
 }
+/* Text box to take any space not covered by button */
 #input-form input {
   color: #E0E3E8;
   border: 0; 
@@ -217,6 +230,7 @@ ul {
 /* ---------------- Mobile Breakpoint ---------------- */
 
 @media all and (max-width: 640px) {
+  /* Switch so User List is above chat */
   #page-wrapper {
     -webkit-flex-direction: column;
     -moz-flex-direction: column;
@@ -226,11 +240,15 @@ ul {
     order: 0;
     min-height: 50px;
   }
+  /* Show at least one line of users, and allow at most 
+   * two visible lines before adding a scrollbar
+   */
   #users-window {
     min-height: 20px;
     max-height: 41px;
     flex: 0 0 auto;
   }
+  /* Switch users to a comma sepperated list */
   #users {
     -webkit-flex-direction: row;
     -moz-flex-direction: row;

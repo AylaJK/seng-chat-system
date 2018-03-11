@@ -61,10 +61,12 @@ $(function () {
   };
 
   let displayErrorMessage = function(msg, data) {
+    // Error messages must be cleared by another function call, not a timeout
     displaySysMessage($('<li style="display: none;">').addClass('error').data('error', data).text(msg), false);
   };
 
   let userSetOnline = function(user) {
+    // If user not currently in Online Users list
     if ($('#users li').filter(function() { return $(this).data('uid') === user.id; }).length === 0)
       $('#users').append(
         $('<li>').data('uid', user.id).data('uname', user.name).data('ucolour', user.colour).html(
@@ -78,10 +80,12 @@ $(function () {
   };
 
   let changeName = function(user) {
+    // Change name in chat history
     $('#messages li')
       .filter(function() { return $(this).data('uid') === user.id; })
       .find('span.username')
       .text(user.name);
+    // Change name in Online Users list 
     $('#users li')
       .filter(function() { return $(this).data('uid') === user.id; })
       .data('uname', user.name)
@@ -90,10 +94,12 @@ $(function () {
   };
 
   let changeColour = function(user) {
+    // Change colour in chat history
     $('#messages li')
       .filter(function() { return $(this).data('uid') === user.id; })
       .find('span.username')
       .css('color', '#' + user.colour);
+    // Change colour in Online Users list
     $('#users li')
       .filter(function() { return $(this).data('uid') === user.id; })
       .data('ucolour', user.colour)
@@ -116,15 +122,17 @@ $(function () {
           'To change your nickname colour use \'/nickcolor\'.');
     }
 
+    // Set name field to left of input text box
+    $('#username').text(info.you.name);
+
     // Clear and rebuild Online User list
     $('#users li').remove();
     userSetOnline(info.you);
-    $('#username').text(info.you.name);
     for (let userid of Object.keys(info.users)) {
       userSetOnline(info.users[userid]);
     }
 
-    // Restore Any missed History
+    // Display Any missed Chat History
     for (let record of info.history) {
       if ($('#messages li').filter(function() { return $(this).data('rid') === record.id; }).length === 0)
         displayChatMessage(record);
