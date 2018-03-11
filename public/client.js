@@ -17,7 +17,7 @@ $(function () {
 
   let displayChatMessage = function(record) {
     $('#messages').append(
-      $('<li>').addClass('chat-message').addClass(function() {
+      $('<li>').addClass(function() {
         if (record.user.id === me.id) return 'my-message';
       }).data('rid', record.id).data('uid', record.user.id).html(
         $('<p />').html([
@@ -31,10 +31,37 @@ $(function () {
         ]).append(record.msg)
       )
     );
+    $("#messages").scrollTop($("#messages")[0].scrollHeight);
   };
 
-  let displaySysMessage = function(msg) {
-    $('#messages').append($('<li>').addClass('system-message').text(msg));
+  let displaySysMessage = function($msg, persistent) {
+    $('#sysmessages').append($msg);
+    $msg.show('fast', () => 
+      $("#messages").scrollTop($("#messages")[0].scrollHeight)
+    );
+    if (!persistent) {
+      setTimeout(() => {
+        $msg.hide('fast', () => 
+          $msg.remove()
+        );
+      }, 10000);
+    }
+  };
+
+  let displayInfoMessage = function(msg) {
+    displaySysMessage($('<li style="display: none;">').text(msg));
+  };
+
+  let displaySuccessMessage = function(msg) {
+    displaySysMessage($('<li style="display: none;">').addClass('success').text(msg));
+  };
+
+  let displayWarningMessage = function(msg) {
+    displaySysMessage($('<li style="display: none;">').addClass('warn').text(msg));
+  };
+
+  let displayErrorMessage = function(msg) {
+    displaySysMessage($('<li style="display: none;">').addClass('error').text(msg), true);
   };
 
   let userSetOnline = function(user) {
@@ -70,16 +97,34 @@ $(function () {
     $('#users li')
       .filter(function() { return $(this).data('uid') === user.id; })
       .data('ucolour', user.colour)
+      .find('span')
       .css('color', '#' + user.colour);
   };
 
   socket.on('hello', function(info) {
     me = info.you;
+
+    // If offline message is displayed, remove it and show recconnected message
+    let offlineMessages = $('#sysmessages li').filter(function() { return $(this).data('offline'); });
+    if (offlineMessages.length !== 0) {
+      offlineMessages.remove();
+      displaySuccessMessage('Reconnected');
+    }
+    else {
+      displayInfoMessage('Welcome ' + info.you.name);
+      displayInfoMessage('To change your nickname use \'/nick\'. ' +
+          'To change your nickname colour use \'/nickcolor\'.');
+    }
+
+    // Clear and rebuild Online User list
+    $('#users li').remove();
     userSetOnline(info.you);
     $('#username').text(info.you.name);
     for (let userid of Object.keys(info.users)) {
       userSetOnline(info.users[userid]);
     }
+
+    // Restore Any missed History
     for (let record of info.history) {
       if ($('#messages li').filter(function() { return $(this).data('rid') === record.id; }).length === 0)
         displayChatMessage(record);
@@ -87,8 +132,7 @@ $(function () {
   });
 
   socket.on('disconnect', function () {
-    userSetOffline(me);
-    displaySysMessage('You are offline');
+    displayErrorMessage('You are offline');
   });
 
   socket.on('user join', function(user) {
@@ -101,7 +145,6 @@ $(function () {
 
   socket.on('new message', function(record) {
     displayChatMessage(record);
-    window.scrollTo(0, document.body.scrollHeight);
   });
 
   socket.on('user change name', function(user) {
@@ -116,15 +159,16 @@ $(function () {
     if (result.success) { 
       changeName(result.user);
       $('#username').text(result.user.name);
+      displaySuccessMessage('Nickname changed to ' + result.user.name);
     }
-    else displaySysMessage(result.msg);
+    else displayWarningMessage(result.msg);
   });
 
   socket.on('change colour', function(result) {
     if (result.success) { 
       changeColour(result.user);
-      displaySysMessage('You changed your colour to ' + result.user.colour);
+      displaySuccessMessage('Colour changed to ' + result.user.colour);
     }
-    else displaySysMessage(result.msg);
+    else displayWarningMessage(result.msg);
   });
 });
