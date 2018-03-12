@@ -20,14 +20,14 @@ $(function () {
       $('<li>').addClass(function() {
         if (record.user.id === me.id) return 'my-message';
       }).data('rid', record.id).data('uid', record.user.id).html(
-        $('<p />').html([
-          $('<span />').addClass('timestamp').text(() => {
+        $('<p>').html([
+          $('<span>').addClass('timestamp').text(() => {
             let date = new Date(record.time);
             return date.getHours().toString().padStart(2, "0") + 
               ":" + 
               date.getMinutes().toString().padStart(2, "0");
           })[0],
-          $('<span />').addClass('username').css('color', '#' + record.user.colour).text(record.user.name)[0],
+          $('<span>').addClass('username').css('color', '#' + record.user.colour).text(record.user.name)[0],
         ]).append(record.msg)
       )
     );
@@ -70,7 +70,7 @@ $(function () {
     if ($('#users li').filter(function() { return $(this).data('uid') === user.id; }).length === 0)
       $('#users').append(
         $('<li>').data('uid', user.id).data('uname', user.name).data('ucolour', user.colour).html(
-          $('<span />').css('color', '#' + user.colour).text(user.name)
+          $('<span>').css('color', '#' + user.colour).text(user.name)
         )
       );
   };
